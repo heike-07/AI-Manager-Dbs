@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>插件搜索</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 95%;
+            max-width: auto;
+            margin: 40px auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+        }
+        table th, table td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        table th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        table tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+        .alert-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #bee5eb;
+            margin-top: 20px;
+        }
+        .back-button {
+            display: block;
+            width: 150px;
+            margin: 30px auto 0;
+            text-align: center;
+            padding: 12px;
+            color: white;
+            background-color: #28a745;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        .back-button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>插件搜索</h1>
+        <form method="POST" action="{{ url_for('search2') }}">
+            <div class="form-group">
+                <input type="text" class="input-search" name="query" value="{{ query }}" placeholder="请输入插件名称进行搜索..." required>
+            </div>
+            <button type="submit">搜索</button>
+        </form>
+
+        {% if plugins %}
+            <h2>搜索结果</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>插件名称</th>
+                        <th>插件部署位置</th>
+                        <th>插件下载地址</th>
+                        <th>插件所属</th>
+                        <th>安装时间</th>
+                        <th>更新时间</th>
+                        <th>插件备注</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for plugin in plugins %}
+                        <tr>
+                            <td>{{ plugin[0] }}</td>
+                            <td >{{ plugin[1] }}</td>
+                            <td>{{ plugin[2] }}</td>
+                            <td><a href="{{ plugin[3] }}" target="_blank">{{ plugin[3] }}</a></td>
+                            <td>{{ plugin[4] }}</td>
+                            <td>{{ plugin[6] }}</td>
+                            <td>{{ plugin[7] }}</td>
+                            <td class="normal">{{ plugin[5] }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="alert-info">
+                <strong>没有找到相关插件！</strong> 请尝试其他关键词。
+            </div>
+        {% endif %}
+        <a href="{{ url_for('index') }}" class="back-button">返回首页</a>
+    </div>
+</body>
+</html>

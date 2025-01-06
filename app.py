@@ -206,7 +206,32 @@ def search1():
     return render_template('search1.html', models=models, query=query)
 
 
+@app.route('/search2', methods=['GET', 'POST'])
+def search2():
+    query = ''
+    plugins = []  # 默认没有结果
 
+    if request.method == 'POST':
+        query = request.form['query']  # 获取表单提交的查询关键词
+
+        if query:
+            # 连接数据库
+            conn = get_db_connection()
+            cursor = conn.cursor()
+            
+            # 模糊查询模型名称
+            cursor.execute("""
+                SELECT * FROM public."插件信息"
+                WHERE "插件名称" ILIKE %s
+                ORDER BY "插件名称" ASC
+            """, ('%' + query + '%',))
+            
+            plugins = cursor.fetchall()  # 获取查询结果
+            cursor.close()
+            conn.close()
+
+    # 返回结果到模板
+    return render_template('search2.html', plugins=plugins, query=query)
 
 
 
