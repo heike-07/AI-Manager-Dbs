@@ -35,8 +35,8 @@
             text-align: center;
             color: #c1c1ca;
             font-size: 15px;
-            margin-bottom: 10px;
-            margin-top: 10px;
+            margin-bottom: 5px;
+            margin-top: 5px;
         }
 
         .form-section {
@@ -190,17 +190,14 @@
 
         <!-- 按钮横排 -->
         <div class="button-container">
-            <h5>加</h5>
             <button id="openModelModalBtn">添加模型</button>
             <button id="openPluginModalBtn">添加插件</button>
         </div>
         <div class="button-container">
-            <h5>看</h5>
             <button onclick="window.location.href='{{ url_for('models') }}';" class="button2">查看模型</button>
             <button onclick="window.location.href='{{ url_for('plugins') }}';"class="button2">查看插件</button>
         </div>
         <div class="button-container">
-            <h5>搜</h5>
             <button onclick="window.location.href='{{ url_for('search1') }}';">模型搜索</button>
             <button onclick="window.location.href='{{ url_for('search2') }}';">插件搜索</button>
         </div>
