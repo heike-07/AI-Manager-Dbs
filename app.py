@@ -20,15 +20,6 @@ DB_CONFIG = {
     'port': int(config['database']['port'])  # 将端口号转为整数
 }
 
-# # PostgreSQL 数据库配置
-# DB_CONFIG = {
-#     'dbname': 'AI_Learning',  # 数据库名称
-#     'user': 'postgres',      # 用户名
-#     'password': 'heike07',  # 密码
-#     'host': 'localhost',      # 数据库地址
-#     'port': 5432             # PostgreSQL 默认端口
-# }
-
 # 连接数据库
 def get_db_connection():
     conn = psycopg2.connect(**DB_CONFIG)
@@ -185,6 +176,39 @@ def plugins():
     # 计算总页数
     total_pages = (total_plugins // per_page) + (1 if total_plugins % per_page > 0 else 0)
     return render_template('plugins.html', plugins=plugins, page=page, total_pages=total_pages)
+
+# 搜索模型
+@app.route('/search1', methods=['GET', 'POST'])
+def search1():
+    query = ''
+    models = []  # 默认没有结果
+
+    if request.method == 'POST':
+        query = request.form['query']  # 获取表单提交的查询关键词
+
+        if query:
+            # 连接数据库
+            conn = get_db_connection()
+            cursor = conn.cursor()
+            
+            # 模糊查询模型名称
+            cursor.execute("""
+                SELECT * FROM public."模型信息"
+                WHERE "模型名称" ILIKE %s
+                ORDER BY "模型名称" ASC
+            """, ('%' + query + '%',))
+            
+            models = cursor.fetchall()  # 获取查询结果
+            cursor.close()
+            conn.close()
+
+    # 返回结果到模板
+    return render_template('search1.html', models=models, query=query)
+
+
+
+
+
 
 # 启动 Flask 应用
 if __name__ == '__main__':
