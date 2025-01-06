@@ -6,7 +6,7 @@
 
 ## 主界面
 
-![ui.png](D:\ComfyUI\output\AI project\Manager\ui.png)
+![ui.png](ui.png)
 
 ## 功能
 
