@@ -26,14 +26,14 @@
 
         h1 {
             text-align: center;
-            color: #4CAF50;
+            color: #02059b;
             font-size: 24px;
             margin-bottom: 10px;
         }
 
         h4 {
             text-align: center;
-            color: #060472;
+            color: #c1c1ca;
             font-size: 15px;
             margin-bottom: 10px;
             margin-top: 10px;
@@ -91,6 +91,21 @@
             background-color: #45a049;
         }
 
+        .button2 {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 24px;
+            font-size: 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .button2:hover {
+            background-color: #0069da;
+        }
+
         .button-container {
             display: flex;
             justify-content: space-between;
@@ -132,7 +147,7 @@
 
         .modal-content {
             background-color: #fefefe;
-            margin: 15% auto;
+            margin: 5% auto;
             padding: 20px;
             border: 1px solid #888;
             width: 80%;
@@ -159,7 +174,7 @@
 
     <div class="container">
         <h1>AIGC 数据库管理工具 - Database Manager Tools</h1>
-        <h4>Author:@heike07</h4>
+        
         <!-- 显示 flash 消息 -->
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
@@ -175,10 +190,17 @@
 
         <!-- 按钮横排 -->
         <div class="button-container">
+            <h5>加</h5>
             <button id="openModelModalBtn">添加模型</button>
             <button id="openPluginModalBtn">添加插件</button>
-            <button onclick="window.location.href='{{ url_for('models') }}';">查看模型</button>
-            <button onclick="window.location.href='{{ url_for('plugins') }}';">查看插件</button>
+        </div>
+        <div class="button-container">
+            <h5>看</h5>
+            <button onclick="window.location.href='{{ url_for('models') }}';" class="button2">查看模型</button>
+            <button onclick="window.location.href='{{ url_for('plugins') }}';"class="button2">查看插件</button>
+        </div>
+        <div class="button-container">
+            <h5>搜</h5>
             <button onclick="window.location.href='{{ url_for('search1') }}';">模型搜索</button>
             <button onclick="window.location.href='{{ url_for('search2') }}';">插件搜索</button>
         </div>
@@ -263,8 +285,9 @@
                     </div>
                 </form>
             </div>
-        </div>
+        </div> 
     </div>
+    <h4>Author:@heike07</h4>
 
     <script>
         // 打开模型模态框
