@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIGC 数据库管理工具 - Database Manager Tools</title>
+    <style>
+        /* 基础样式 */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f7f9fc;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 30px;
+            background-color: #fff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #4CAF50;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        h4 {
+            text-align: center;
+            color: #060472;
+            font-size: 15px;
+            margin-bottom: 10px;
+            margin-top: 10px;
+        }
+
+        .form-section {
+            margin-bottom: 40px;
+        }
+
+        .form-title {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            font-size: 14px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            resize: vertical;
+            height: 80px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            font-size: 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .button-container button {
+            width: 48%;
+        }
+
+        /* 消息提示 */
+        .flash-message {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .flash-message.success {
+            color: green;
+        }
+
+        .flash-message.error {
+            color: red;
+        }
+
+        /* 模态框样式 */
+        .modal {
+            display: none; /* 初始时隐藏 */
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 8px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>AIGC 数据库管理工具 - Database Manager Tools</h1>
+        <h4>Author:@heike07</h4>
+        <!-- 显示 flash 消息 -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div>
+            {% for category, message in messages %}
+                <div class="flash-message {% if category == 'success' %}success{% else %}error{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+            </div>
+        {% endif %}
+        {% endwith %}
+
+        <!-- 按钮横排 -->
+        <div class="button-container">
+            <button id="openModelModalBtn">添加模型</button>
+            <button id="openPluginModalBtn">添加插件</button>
+            <button onclick="window.location.href='{{ url_for('models') }}'">查看模型</button>
+            <button onclick="window.location.href='{{ url_for('plugins') }}'">查看插件</button>
+        </div>
+
+        <!-- 模型弹出框 -->
+        <div id="modelModal" class="modal">
+            <div class="modal-content">
+                <span class="close" id="closeModelModalBtn">&times;</span>
+                <h2>填写模型信息</h2>
+                <form method="POST" id="modelForm">
+                    {{ model_form.hidden_tag() }}
+                    <div>
+                        <label for="model_name">模型名称</label>
+                        {{ model_form.name() }}
+                    </div>
+                    <div>
+                        <label for="model_type">模型类型</label>
+                        <input type="text" name="model_type" required placeholder="输入模型类型" />
+                    </div>
+                    <div>
+                        <label for="model_location">模型部署位置</label>
+                        <input type="text" name="model_location" required placeholder="输入模型部署位置" />
+                    </div>
+                    <div>
+                        <label for="model_owner">模型所属</label>
+                        <input type="text" name="model_owner" required placeholder="输入模型所属" />
+                    </div>
+                    <div>
+                        <label for="model_download">模型下载地址</label>
+                        <input type="url" name="model_download" required placeholder="输入模型下载地址" />
+                    </div>
+                    <div>
+                        <label for="model_description">模型描述</label>
+                        <textarea name="model_description" required placeholder="输入模型描述"></textarea>
+                    </div>
+                    <div>
+                        <label for="model_remark">模型备注</label>
+                        <textarea name="model_remark" placeholder="输入模型备注"></textarea>
+                    </div>
+                    <div class="button-container">
+                        <button type="submit">提交</button>
+                        <button type="button" id="closeModelModalBtn2">关闭</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- 插件弹出框 -->
+        <div id="pluginModal" class="modal">
+            <div class="modal-content">
+                <span class="close" id="closePluginModalBtn">&times;</span>
+                <h2>填写插件信息</h2>
+                <form method="POST" id="pluginForm">
+                    {{ plugin_form.hidden_tag() }}
+                    <div>
+                        <label for="plugin_name">插件名称</label>
+                        {{ plugin_form.name() }}
+                    </div>
+                    <div>
+                        <label for="plugin_location">插件部署位置</label>
+                        <input type="text" name="plugin_location" required placeholder="输入插件部署位置" />
+                    </div>
+                    <div>
+                        <label for="plugin_download">插件下载地址</label>
+                        <input type="url" name="plugin_download" required placeholder="输入插件下载地址" />
+                    </div>
+                    <div>
+                        <label for="plugin_owner">插件所属</label>
+                        <input type="text" name="plugin_owner" required placeholder="输入插件所属" />
+                    </div>
+                    <div>
+                        <label for="plugin_remark">插件备注</label>
+                        <textarea name="plugin_remark" placeholder="输入插件备注"></textarea>
+                    </div>
+                    <div>
+                        <label for="install_date">安装时间</label>
+                        <input type="date" name="install_date" required />
+                    </div>
+                    <div class="button-container">
+                        <button type="submit">提交</button>
+                        <button type="button" id="closePluginModalBtn2">关闭</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 打开模型模态框
+        document.getElementById('openModelModalBtn').onclick = function() {
+            document.getElementById('modelModal').style.display = 'block';
+        };
+
+        // 打开插件模态框
+        document.getElementById('openPluginModalBtn').onclick = function() {
+            document.getElementById('pluginModal').style.display = 'block';
+        };
+
+        // 关闭模型模态框
+        document.getElementById('closeModelModalBtn').onclick = function() {
+            document.getElementById('modelModal').style.display = 'none';
+        };
+
+        // 关闭插件模态框
+        document.getElementById('closePluginModalBtn').onclick = function() {
+            document.getElementById('pluginModal').style.display = 'none';
+        };
+
+        // 点击关闭按钮也隐藏模态框
+        document.getElementById('closeModelModalBtn2').onclick = function() {
+            document.getElementById('modelModal').style.display = 'none';
+        };
+
+        document.getElementById('closePluginModalBtn2').onclick = function() {
+            document.getElementById('pluginModal').style.display = 'none';
+        };
+
+        // 点击页面其他地方时关闭模态框
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('modelModal')) {
+                document.getElementById('modelModal').style.display = 'none';
+            }
+            if (event.target == document.getElementById('pluginModal')) {
+                document.getElementById('pluginModal').style.display = 'none';
+            }
+        };
+    </script>
+</body>
+</html>

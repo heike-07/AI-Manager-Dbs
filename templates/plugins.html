@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>插件信息数据库 - Plugin Information Database</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            padding: 0 20px;
+        }
+
+        .container {
+            width: 100%;
+            margin: 0 auto;
+            padding: 30px 0;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+            color: #343a40;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+            word-wrap: break-word; /* Allow text to wrap in cells */
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+        }
+
+        td {
+            color: #495057;
+            white-space: nowrap;
+        }
+
+        td a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        td a:hover {
+            text-decoration: underline;
+        }
+
+        td.normal {
+            white-space: normal;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+            gap: 15px;
+        }
+
+        .pagination a {
+            padding: 8px 16px;
+            text-decoration: none;
+            color: #007bff;
+            background-color: #fff;
+            border: 1px solid #007bff;
+            border-radius: 4px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .pagination a:hover {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .pagination .disabled {
+            color: #aaa;
+            pointer-events: none;
+            background-color: #f1f1f1;
+        }
+
+        .pagination .active {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .back-button {
+            display: block;
+            width: 150px;
+            margin: 30px auto 0;
+            text-align: center;
+            padding: 12px;
+            color: white;
+            background-color: #28a745;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        .back-button:hover {
+            background-color: #218838;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>插件信息数据库 - Plugin Information Database</h1>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>插件名称</th>
+                    <th>插件部署位置</th>
+                    <th>插件下载地址</th>
+                    <th>插件所属</th>
+                    <th>安装时间</th>
+                    <th>更新时间</th>
+                    <th>插件备注</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for plugin in plugins %}
+                    <tr>
+                        <td>{{ plugin[0] }}</td>
+                        <td >{{ plugin[1] }}</td>
+                        <td>{{ plugin[2] }}</td>
+                        <td><a href="{{ plugin[3] }}" target="_blank">{{ plugin[3] }}</a></td>
+                        <td>{{ plugin[4] }}</td>
+                        <td>{{ plugin[6] }}</td>
+                        <td>{{ plugin[7] }}</td>
+                        <td class="normal">{{ plugin[5] }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="pagination">
+            <!-- 上一页 -->
+            <a href="{{ url_for('plugins', page=page-1) }}" class="{% if page == 1 %}disabled{% endif %}">上一页</a>
+
+            <!-- 页码 -->
+            {% for p in range(1, total_pages+1) %}
+                <a href="{{ url_for('plugins', page=p) }}" class="{% if p == page %}active{% endif %}">{{ p }}</a>
+            {% endfor %}
+
+            <!-- 下一页 -->
+            <a href="{{ url_for('plugins', page=page+1) }}" class="{% if page == total_pages %}disabled{% endif %}">下一页</a>
+        </div>
+
+        <a href="{{ url_for('index') }}" class="back-button">返回首页</a>
+    </div>
+
+</body>
+</html>
