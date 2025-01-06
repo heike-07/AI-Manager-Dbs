@@ -6,7 +6,7 @@
 
 ## 主界面
 
-![ui.png](ui.png)
+![ui.png](ui1.png)
 
 ## 功能
 
