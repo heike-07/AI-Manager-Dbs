@@ -4,6 +4,10 @@
 
 这是一个基于 Flask 框架和 Python 开发的简单 CRUD（创建、读取、更新、删除）应用程序。该项目提供了针对 ComfyUI 模型和插件的查询、添加和搜索功能。目前暂不提供删除和修改功能。
 
+## 主界面
+
+![ui.png](D:\ComfyUI\output\AI project\Manager\ui.png)
+
 ## 功能
 
 - **查询模型和插件**：允许从数据库中获取有关 ComfyUI 模型和插件的数据。
