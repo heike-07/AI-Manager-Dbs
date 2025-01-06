@@ -86,34 +86,4 @@ log_file = /path/to/your/log/file.log
 ## 贡献
 欢迎贡献！请先 fork 本仓库，在新分支上进行开发，完成后提交 Pull Request。
 
-## 配置说明
-```shell
-关键更改说明：
-
-去除了依赖安装部分：没有提供关于如何安装依赖库（如 `pip install` 等）的说明，假设用户已经准备好运行环境。
-  
-配置文件：`config.ini` 的修改和使用依然保留，确保用户能够正确配置数据库、Flask 应用和日志。
-```
-### 配置样例
-```ini
-1. 将 `config_EXP.ini` 重命名为 `config.ini`。
-2. 填写数据库连接和应用配置：
-
-```ini
-[database]
-dbname = your_database_name
-user = your_username
-password = your_password
-host = your_host
-port = 5432
-
-[app]
-secret_key = your_secret_key
-debug = True
-
-[logging]
-log_level = DEBUG
-log_file = /path/to/log/file.log
-```
-
 END
