@@ -7,6 +7,9 @@ from psycopg2 import sql  # 确保导入 sql 模块
 from flask import flash, redirect, url_for
 import configparser
 
+from flask import Flask, render_template, request, jsonify
+from zhipuai import ZhipuAI
+
 # 读取配置文件
 config = configparser.ConfigParser()
 config.read('config.ini')  # 读取配置文件
@@ -232,6 +235,84 @@ def search2():
 
     # 返回结果到模板
     return render_template('search2.html', plugins=plugins, query=query)
+
+
+# 读取 API 密钥
+def read_api_key(file_path="GLM4-Flash.key"):
+    with open(file_path, "r") as file:
+        api_key = file.read().strip()  # 读取并去掉多余的空白字符
+    return api_key
+
+# 使用读取到的 API 密钥初始化客户端
+api_key = read_api_key("GLM4-Flash.key")  # 根据实际路径调整文件名
+client = ZhipuAI(api_key=api_key)
+
+# 用来存储对话历史
+messages = []
+
+# 调用模型获取响应
+def get_model_response(action, query):
+    try:
+        # 确保query字符串以UTF-8格式处理
+        query = query.encode('utf-8').decode('utf-8')  # 强制转换为UTF-8
+
+        # 控制台调试输出
+        print(f"调用模型: {action}，输入内容: {query}")
+
+        # 根据不同的操作，构造提示词
+        if action == 'translate':
+            prompt = f"翻译以下中文为英文：{query}"
+        elif action == 'expand':
+            prompt = f"将以下内容扩写并翻译：{query}"
+
+        # 打印构造的提示词，确认无误
+        print(f"构造的提示词: {prompt}")
+
+        # 构造消息
+        messages = [{"role": "user", "content": prompt}]
+
+        # 调用 ZhipuAI 接口（确保已正确初始化 client）
+        response = client.chat.completions.create(
+            model="glm-4-flash",  # 使用的模型
+            messages=messages  # 传递对话历史
+        )
+
+        # 获取模型响应
+        model_response = response.choices[0].message.content
+
+        # 打印模型的响应，确认返回内容
+        print(f"模型的响应: {model_response}")
+
+        # 返回模型响应的内容
+        return model_response
+
+    except Exception as e:
+        print(f"API 调用发生错误: {e}")  # 错误时的调试信息
+        return f"发生错误，请稍后再试。错误详情: {str(e)}"
+
+
+# Flask 路由
+@app.route('/translate', methods=['GET', 'POST'])
+def translate():
+    translated_text = ""
+    expanded_text = ""
+    query = ''  # 默认为空
+
+    if request.method == 'POST':
+        query = request.form['query']  # 获取输入框中的中文文本
+        query = query.encode('utf-8', 'ignore').decode('utf-8')  # 清理编码问题
+        action = request.form.get('action')  # 获取用户选择的操作（翻译或扩写）
+
+        if query:
+            if action == 'translate':
+                # 调用 ZhipuAI 接口进行翻译
+                translated_text = get_model_response('translate', query)
+            elif action == 'expand':
+                # 调用 ZhipuAI 接口进行扩写
+                expanded_text = get_model_response('expand', query)
+
+    return render_template('translate.html', translated_text=translated_text, 
+                           expanded_text=expanded_text, query=query)
 
 
 
